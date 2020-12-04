@@ -1,2 +1,4 @@
 C:\Users\MEEL Electronics\source\repos\RAII\Debug\RAII.exe
 C:\Users\MEEL Electronics\source\repos\RAII\Debug\RAII.pdb
+C:\repos\cpp\RAII\RAII\Debug\RAII.exe
+C:\repos\cpp\RAII\RAII\Debug\RAII.pdb

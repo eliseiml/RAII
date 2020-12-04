@@ -1,2 +1,3 @@
 ﻿  RAII.cpp
-  RAII.vcxproj -> C:\Users\MEEL Electronics\source\repos\RAII\Debug\RAII.exe
+C:\repos\cpp\RAII\RAII\RAII.cpp(77): warning C4715: FileHandler::operator=: значение возвращается не при всех путях выполнения
+  RAII.vcxproj -> C:\repos\cpp\RAII\RAII\Debug\RAII.exe

@@ -1,0 +1,8 @@
+Hello, my friend!
+I'm writing new string through a new object!
+Hello, my friend!
+I'm writing new string through a new object!
+Hello, my friend!
+I'm writing new string through a new object!
+Hello, my friend!
+I'm writing new string through a new object!

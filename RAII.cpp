@@ -12,11 +12,10 @@ RAII - захват ресурса есть инициализация. При �
 class FileHandler {
 private:
     string fpath;
-    fstream *fs;
+    fstream* fs = 0;
     
     FileHandler(FileHandler& fh) = delete;  //Удаление копирующего конструктора    
-    FileHandler& operator=(FileHandler& fh) = delete;   //Удаление копирующего оператора присваивания    
-    FileHandler& operator=(FileHandler&& fh) = delete;  //Удаление перемещающего оператора присваивания
+    FileHandler& operator=(FileHandler& fh) = delete;   //Удаление копирующего оператора присваивания   
 
 public:
     class FileException{
@@ -33,7 +32,6 @@ public:
     FileHandler(string path) : fpath(path) {
         try{
             fs = new fstream();
-            //fs->open(fpath, fstream::in | fstream::out | fstream::app);
             fs->open(fpath, ios_base::in | ios_base::app);
             if (!fs->is_open()) {
                 throw FileException("\n--File opening error!\n");
@@ -49,7 +47,7 @@ public:
     }
 
     //Перемещающий конструктор
-    FileHandler(FileHandler&& other) {
+    FileHandler(FileHandler&& other) noexcept {
 
         if (&other == this)
             return;
@@ -61,6 +59,21 @@ public:
         other.fs = nullptr;
 
         cout << "[" << this << "]" <<"MOVE constructor has been called" << endl;
+    }
+
+    //Перемещающий оператор присваивания
+    FileHandler& operator=(FileHandler&& other) noexcept {
+        
+        if (&other == this)
+            return *this;
+
+        fpath = other.fpath;
+        fs = other.fs;
+
+        other.fpath.clear();
+        other.fs = nullptr;
+
+        cout << "[" << this << "]" << "Moving OPERATOR = has been called" << endl;
     }
 
     void writeln(const string& str) {
@@ -94,8 +107,8 @@ public:
                     cout << str << endl;
                     str.clear();
                 }  
-                cout << "--INFO: good: " << fs->good() << ", bad: " << fs->bad() << ", fail: " 
-                    << fs->fail() << ", rdstate:" << fs->rdstate() << endl; 
+                /*cout << "--INFO: good: " << fs->good() << ", bad: " << fs->bad() << ", fail: " 
+                    << fs->fail() << ", rdstate:" << fs->rdstate() << endl; */
             }
             else
                 throw FileException("\n--Error reading file. Probably file is not open!\n");
@@ -119,12 +132,33 @@ public:
 
 int main()
 {
+    //Создаем объект и захватываем ресурс, читаем данные из файла и записываем в него строку
     FileHandler fh("read.txt");
     fh.read_all();
     fh.writeln("Hello, my friend!");
-    cout << endl << "Trying move the object" << endl;
+
+    cout << endl << "--Trying move the object" << endl;
+
+    //Создаем другой объект и перемещаем в него данные первого
     FileHandler fm = move(fh);
+
+    //Пытаемся получить доступ к файлу через первый объект
+    fh.read_all();
+
+    //Читаем файл через второй объект, записываем в него строку и снова читаем
     fm.read_all();
     fm.writeln("I'm writing new string through a new object!");
     fm.read_all();
+
+    //Возвращаем право владения файлом првому объекту через перегруженный оператор =
+    fh = move(fm);
+
+    //Пробуем читать файл через второй объект
+    fm.read_all();
+
+    //Пробуем прочитать файл через первый объект
+    fh.read_all();
+
+    system("pause>nul");
+    return 0;
 }
